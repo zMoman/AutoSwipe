@@ -5,18 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Car Market</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            text-align: center;
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            color: #333;
+    body {
+         font-family: Arial, sans-serif;
+         padding: 20px;
+        text-align: center;
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+        color: white
         }
     
-        h1, h2, h3 {
-            color: #0056b3;
-        }
-    
+ h1, h2, h3 {
+    color: #f8f9fa;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    margin-top: 60px; /* Moves them lower */
+}
+
+
+
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+
+.toast {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 300px;
+    max-width: 350px;
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: fadeIn 0.5s ease-in-out forwards;
+    position: relative;
+    border: 2px solid #ddd;
+    text-align: center;
+}
+
+/* Updated Toast Types */
+.toast-success { border-color: #28a745; color: #155724; background: #d4edda; }
+.toast-error { border-color: #dc3545; color: #721c24; background: #f8d7da; }
+.toast-warning { border-color: #ffc107; color: #856404; background: #fff3cd; }
+.toast-info { border-color: #007bff; color: #004085; background: #cce5ff; }
+
+/* Close button */
+.toast button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: inherit;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+
+/* Progress bar */
+.toast .progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.1);
+    animation: progressBar 3s linear forwards;
+}
+
+/* Fade-in and Fade-out Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-20px); }
+}
+@keyframes progressBar {
+    from { width: 100%; }
+    to { width: 0; }
+}
+
+
         .page {
             display: none;
         }
@@ -25,51 +105,71 @@
             display: block;
             animation: fadeIn 0.5s ease-in-out;
         }
-    
+
         form {
-            margin: 20px 400px;
-            background: #fff;
-            padding: 20px;
+            margin: 80px auto 20px;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+
         }
-    
+
         form label {
             display: block;
             margin: 10px 0 5px;
             font-weight: bold;
-            color: #555;
+            color: white;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
         }
-    
-        form input[type="text"], form input[type="password"], form input[type="number"] {
-            width: calc(20% - 20px);
-            padding: 10px;
-            margin: 10px 0 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-    
-        form button {
-            background: #0056b3;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-    
-        form button:hover {
-            background: #004085;
-        }
+
+        form input {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 90%; /* Makes input box wider */
+    height: 50px; /* Increases height */
+    padding: 12px; /* Adds padding for better spacing */
+    font-size: 18px; /* Makes text inside bigger */
+    border-radius: 8px; /* Smooths corners */
+}
+
+form input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 18px; /* Makes placeholder text larger */
+}
+
+
+form button {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    transition: 0.3s;
+    width: 90%; /* Makes button wider */
+    height: 55px; /* Increases button height */
+    font-size: 20px; /* Enlarges text */
+    color:  rgba(255, 255, 255, 0.6);
+    font-weight: bold; /* Makes text bolder */
+    border-radius: 8px; /* Rounds the corners */
+    padding: 12px; /* Adds more spacing */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adds a soft shadow */
+    margin-top: 20px; /* Adds space between button and element above */
+}
+
+
+form button:hover {
+    background: linear-gradient(135deg, #0056b3, #003d7a);
+    transform: scale(1.05); /* Slight zoom effect on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Stronger shadow on hover */
+    color: white;
+}
+
+
     
         #vehicle-card, #saved-vehicle-card {
             display: none;
-            border: 1px solid #ddd;
             padding: 20px;
-            background: #fff;
+            background:#2a5298;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             animation: fadeIn 0.5s ease-in-out;
@@ -115,7 +215,7 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background-color: white;
+        background-color: grey;
         padding: 20px;
         box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
         border-radius: 8px;
@@ -145,18 +245,37 @@
                 transform: translate(-50%, -50%);
             }
         }
+
+        .floating-banner {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.2);
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
     </style>
     
 </head>
 <body>
-    <h1>Welcome to Car Market</h1>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container"></div>
+    <div class="floating-banner">🚗 Welcome to Car Market 🚀</div>
+
 
     <div id="login-page" class="page active">
         <h2>Login or Create an Account</h2>
         <form id="login-create-form">
-            <label for="username">Username:</label>
+            <label for="username"></label>
             <input type="text" id="username" name="username" placeholder="Enter your username" required><br>
-            <label for="password">Password:</label>
+            <label for="password"></label>
             <input type="password" id="password" name="password" placeholder="Enter your password" required><br>
             <button type="button" id="login-button">Login</button>
             <button type="button" id="create-account-button">Create Account</button>
@@ -233,6 +352,124 @@
         let currentVehicleIndex = 0;
         let currentSavedCarIndex = 0;
 
+        function showToast(message, type = "info", duration = 800) {
+    const container = document.getElementById("toast-container");
+
+    // Remove existing toast if any
+    if (container.firstChild) {
+        dismissToast(container.firstChild);
+    }
+
+    // Create new toast element
+    const toast = document.createElement("div");
+    toast.classList.add("toast", `toast-${type}`);
+    toast.innerHTML = `
+        <span>${message}</span>
+        <button onclick="dismissToast(this.parentElement)">&times;</button>
+    `;
+
+    // Append toast to the container
+    container.appendChild(toast);
+
+    // Auto-dismiss after duration
+    setTimeout(() => {
+        dismissToast(toast);
+    }, duration);
+}
+
+function dismissToast(toast) {
+    if (toast) {
+        toast.style.animation = "fadeOut 0.5s ease-in-out forwards";
+        setTimeout(() => toast.remove(), 500);
+    }
+}
+
+
+        // Replace all alerts with showToast()
+
+        document.getElementById('login-button').addEventListener('click', async () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                showToast('Please fill in both username and password.', 'warning');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                if (response.ok) {
+                    showToast('Login successful!', 'success');
+                } else {
+                    showToast('Invalid username or password.', 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showToast('An error occurred during login.', 'error');
+            }
+        });
+
+        document.getElementById('create-account-button').addEventListener('click', async () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                showToast('Please fill in both username and password.', 'warning');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/create-account', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                if (response.ok) {
+                    showToast('Account created successfully! Please log in.', 'success');
+                } else {
+                    showToast('Error creating account. Username might be taken.', 'error');
+                }
+            } catch (error) {
+                console.error('Account creation error:', error);
+                showToast('An error occurred during account creation.', 'error');
+            }
+        });
+
+        document.getElementById('budget-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const budget = document.getElementById('budget').value;
+
+            try {
+                const response = await fetch(`/api/vehicles?budget=${budget}`);
+                const data = await response.json();
+                if (data.data.length > 0) {
+                    showToast('Vehicles found!', 'success');
+                } 
+                
+            } catch (error) {
+                console.error('Error fetching vehicles:', error);
+                showToast('Failed to fetch vehicles. Try again later.', 'error');
+            }
+        });
+
+        document.getElementById('save-button').addEventListener('click', async () => {
+            showToast('Car saved successfully!', 'success');
+        });
+
+        document.getElementById('remove-button').addEventListener('click', async () => {
+            showToast('Car removed from saved list.', 'warning');
+        });
+
+        document.getElementById('saved-cars-button').addEventListener('click', () => {
+            showToast('Displaying saved cars.', 'info');
+        });
+
         async function loadSavedCars() {
     try {
         console.log('Fetching saved cars for username:', username); // Debug log
@@ -244,11 +481,13 @@
         } else {
             const error = await response.json();
             console.error('Failed to fetch saved cars:', error);
-            alert(error.error || 'Error fetching saved cars.');
+            showToast(error.error || 'Error fetching saved cars.', 'error');
+
         }
     } catch (error) {
         console.error('Error during fetch:', error);
-        alert('An error occurred while fetching saved cars.');
+        showToast('An error occurred while fetching saved cars.', 'error');
+
     }
 }
 
@@ -264,11 +503,13 @@ async function loadPreferences() {
         } else {
             const error = await response.json();
             console.error('Failed to fetch preferences:', error);
-            alert(error.error || 'Error fetching preferences.');
+            showToast(error.error || 'Error fetching preferences.', 'error');
+
         }
     } catch (error) {
         console.error('Error fetching preferences:', error);
-        alert('An error occurred while fetching preferences.');
+        showToast('An error occurred while fetching preferences.', 'error');
+
     }
 }
 
@@ -281,7 +522,7 @@ loginButton.addEventListener('click', async () => {
     const password = document.getElementById('password').value;
 
     if (!usernameInput || !password) {
-        alert('Please fill in both username and password.');
+        showToast('Please fill in both username and password.', 'warning');
         return;
     }
 
@@ -293,7 +534,6 @@ loginButton.addEventListener('click', async () => {
         });
 
         if (response.ok) {
-            alert('Login successful!');
             username = usernameInput; // Store the username globally
             console.log('Logged in as:', username);
             loginPage.classList.remove('active');
@@ -301,11 +541,11 @@ loginButton.addEventListener('click', async () => {
             await loadSavedCars(); // Fetch saved cars for the logged-in user
         } else {
             const error = await response.json();
-            alert(error.error || 'Invalid username or password.');
         }
     } catch (error) {
         console.error('Login error:', error);
-        alert('An error occurred during login.');
+        showToast('An error occurred during login.', 'error');
+
     }
 });
 
@@ -315,7 +555,7 @@ createAccountButton.addEventListener('click', async () => {
     const password = document.getElementById('password').value;
 
     if (!username || !password) {
-        alert('Please fill in both username and password.');
+        showToast('Please fill in both username and password.', 'warning');
         return;
     }
 
@@ -327,13 +567,13 @@ createAccountButton.addEventListener('click', async () => {
         });
 
         if (response.ok) {
-            alert('Account created successfully! Please log in.');
+            showToast('Account created successfully! Please log in.', 'success');
         } else {
-            alert('Error creating account. Username might be taken.');
+            showToast('Error creating account. Username might be taken.', 'error');
         }
     } catch (error) {
         console.error('Account creation error:', error);
-        alert('An error occurred during account creation. Please try again.');
+        showToast('An error occurred during account creation.', 'error');
     }
 });
 
@@ -351,11 +591,12 @@ createAccountButton.addEventListener('click', async () => {
                     budgetPage.classList.remove('active');
                     vehicleCard.style.display = 'block';
                 } else {
-                    alert('No vehicles found within your budget.');
+                    showToast('No vehicles found within your budget.', 'warning');
                 }
             } catch (error) {
                 console.error('Error fetching vehicles:', error);
-                alert('Failed to fetch vehicles. Try again later.');
+                showToast('Failed to fetch vehicles. Try again later.', 'error');
+
             }
         });
 
@@ -381,14 +622,14 @@ createAccountButton.addEventListener('click', async () => {
                 });
                 if (response.ok) {
                     savedCars.push(currentVehicle);
-                    alert(`${currentVehicle.brand} ${currentVehicle.model} saved successfully!`);
+                    showToast(`${currentVehicle.brand} ${currentVehicle.model} saved successfully!`, 'success');
                     currentVehicleIndex = (currentVehicleIndex + 1) % vehicles.length;
                     displayVehicle(vehicles[currentVehicleIndex]);
                 } else {
-                    alert('Failed to save the car.');
+                    showToast('Failed to save the car.', 'error');
                 }
             } else {
-                alert('Car is already in your saved list.');
+                showToast('Car is already in your saved list.', 'info');
             }
         });
 
@@ -419,21 +660,23 @@ async function savePreference(likesOrDislikes) {
         });
 
         if (response.ok) {
-            alert(`You ${likesOrDislikes} ${currentVehicle.brand} ${currentVehicle.model}.`);
+            showToast(`You ${likesOrDislikes} ${currentVehicle.brand} ${currentVehicle.model}.`, 'success');
         } else {
             const error = await response.json();
             console.error('Failed to save preference:', error);
-            alert(error.error || 'Failed to save preference.');
+            showToast(error.error || 'Failed to save preference.', 'error');
+
         }
     } catch (error) {
         console.error('Error saving preference:', error);
-        alert('An error occurred while saving preference.');
+        showToast('An error occurred while saving preference.', 'error');
+
     }
 }
 
         savedCarsButton.addEventListener('click', () => {
             if (savedCars.length === 0) {
-                alert('No saved cars.');
+                showToast('No saved cars.', 'warning');
                 return;
             }
             currentSavedCarIndex = 0;
@@ -495,7 +738,8 @@ furtherDetails.addEventListener('click', () => {
             savedCars.splice(currentSavedCarIndex, 1);
 
             if (savedCars.length === 0) {
-                alert('You have no more saved cars.');
+                showToast('You have no more saved cars.', 'info');
+
                 savedVehicleCard.style.display = 'none';
                 vehicleCard.style.display = 'block';
                 return;
@@ -504,11 +748,12 @@ furtherDetails.addEventListener('click', () => {
             currentSavedCarIndex = currentSavedCarIndex % savedCars.length;
             displaySavedCar(savedCars[currentSavedCarIndex]);
         } else {
-            alert('Failed to remove car.');
+            showToast('Failed to remove car.', 'error');
+
         }
     } catch (error) {
         console.error('Failed to remove car:', error);
-        alert('Error removing the car. Try again later.');
+        showToast('Error removing the car. Try again later.', 'error');
     }
 });
 

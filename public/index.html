@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Market</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            color: #333;
+        }
+    
+        h1, h2, h3 {
+            color: #0056b3;
+        }
+    
+        .page {
+            display: none;
+        }
+    
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+    
+        form {
+            margin: 20px 400px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    
+        form label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+            color: #555;
+        }
+    
+        form input[type="text"], form input[type="password"], form input[type="number"] {
+            width: calc(20% - 20px);
+            padding: 10px;
+            margin: 10px 0 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+    
+        form button {
+            background: #0056b3;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+    
+        form button:hover {
+            background: #004085;
+        }
+    
+        #vehicle-card, #saved-vehicle-card {
+            display: none;
+            border: 1px solid #ddd;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+    
+        #vehicle-card img, #saved-vehicle-card img {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    
+        .swipe-buttons button, .navigate-buttons button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            background: #f8f9fa;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+    
+        .swipe-buttons button:hover, .navigate-buttons button:hover {
+            background: #e2e6ea;
+        }
+    
+    #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none; /* Ensure it is hidden by default */
+    }
+
+    #popupFurtherDetails {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        z-index: 1000;
+        text-align: left;
+        width: 90%;
+        max-width: 500px;
+        display: none; /* Ensure it is hidden by default */
+        animation: slideIn 0.5s ease-in-out;
+    }
+
+    
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    
+        @keyframes slideIn {
+            from {
+                transform: translate(-50%, -60%);
+            }
+            to {
+                transform: translate(-50%, -50%);
+            }
+        }
+    </style>
+    
+</head>
+<body>
+    <h1>Welcome to Car Market</h1>
+
+    <div id="login-page" class="page active">
+        <h2>Login or Create an Account</h2>
+        <form id="login-create-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" required><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required><br>
+            <button type="button" id="login-button">Login</button>
+            <button type="button" id="create-account-button">Create Account</button>
+        </form>
+    </div>
+    
+
+    <!-- Budget Input Page -->
+    <div id="budget-page" class="page">
+        <h2>Find Your Ideal Vehicle</h2>
+        <form id="budget-form">
+            <label for="budget">Enter your budget (in dollars):</label>
+            <input type="number" id="budget" name="budget" min="1" required>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <!-- Regular Vehicle Display -->
+    <div id="vehicle-card" class="page">
+        <h2 id="vehicle-title"></h2>
+        <img id="vehicle-image" src="" alt="Vehicle Image">
+        <div id="vehicle-details"></div>
+        <button id="vehicle-furtherdetails">More Info</button>
+        <div class="swipe-buttons">
+            <button id="dislike-button">Dislike</button>
+            <button id="like-button">Like</button>
+            <button id="save-button">Save</button>
+        </div>
+        <button id="saved-cars-button">Saved Cars</button>
+    </div>
+
+    <!-- Saved Cars Display -->
+    <div id="saved-vehicle-card" class="page">
+        <h2 id="saved-vehicle-title"></h2>
+        <img id="saved-vehicle-image" src="" alt="Vehicle Image">
+        <div id="saved-vehicle-details"></div>
+        <div class="navigate-buttons">
+            <button id="back-button">Back</button>
+            <button id="next-button">Next</button>
+            <button id="remove-button">Remove from Saved Cars</button>
+        </div>
+        <button id="back-to-vehicles">Back to Vehicles</button>
+    </div>
+
+    <!-- Further Details Popup -->
+    <div id="overlay"></div>
+    <div id="popupFurtherDetails"></div>
+
+    <script>
+        const loginPage = document.getElementById('login-page');
+        const budgetPage = document.getElementById('budget-page');
+        const vehicleCard = document.getElementById('vehicle-card');
+        const savedVehicleCard = document.getElementById('saved-vehicle-card');
+        const vehicleTitle = document.getElementById('vehicle-title');
+        const vehicleImage = document.getElementById('vehicle-image');
+        const vehicleDetails = document.getElementById('vehicle-details');
+        const savedVehicleTitle = document.getElementById('saved-vehicle-title');
+        const savedVehicleImage = document.getElementById('saved-vehicle-image');
+        const savedVehicleDetails = document.getElementById('saved-vehicle-details');
+        const likeButton = document.getElementById('like-button');
+        const dislikeButton = document.getElementById('dislike-button');
+        const saveButton = document.getElementById('save-button');
+        const savedCarsButton = document.getElementById('saved-cars-button');
+        const backButton = document.getElementById('back-button');
+        const nextButton = document.getElementById('next-button');
+        const backToVehiclesButton = document.getElementById('back-to-vehicles');
+        const furtherDetails = document.getElementById('vehicle-furtherdetails');
+        const popupFurtherDetails = document.getElementById('popupFurtherDetails');
+        const overlay = document.getElementById('overlay');
+
+        let username = ''; // Keep track of the logged-in user
+        let vehicles = [];
+        let savedCars = [];
+        let currentVehicleIndex = 0;
+        let currentSavedCarIndex = 0;
+
+        async function loadSavedCars() {
+    try {
+        console.log('Fetching saved cars for username:', username); // Debug log
+        const response = await fetch(`/api/saved-cars?username=${username}`);
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Saved Cars:', data.data); // Debug log
+            savedCars = data.data; // Store saved cars locally
+        } else {
+            const error = await response.json();
+            console.error('Failed to fetch saved cars:', error);
+            alert(error.error || 'Error fetching saved cars.');
+        }
+    } catch (error) {
+        console.error('Error during fetch:', error);
+        alert('An error occurred while fetching saved cars.');
+    }
+}
+
+async function loadPreferences() {
+    try {
+        console.log('Fetching preferences for username:', username);
+
+        const response = await fetch(`/api/preferences?username=${username}`);
+        if (response.ok) {
+            const data = await response.json();
+            console.log('User Preferences:', data.data);
+            // Handle preferences (e.g., display them to the user)
+        } else {
+            const error = await response.json();
+            console.error('Failed to fetch preferences:', error);
+            alert(error.error || 'Error fetching preferences.');
+        }
+    } catch (error) {
+        console.error('Error fetching preferences:', error);
+        alert('An error occurred while fetching preferences.');
+    }
+}
+
+
+        const loginButton = document.getElementById('login-button');
+const createAccountButton = document.getElementById('create-account-button');
+
+loginButton.addEventListener('click', async () => {
+    const usernameInput = document.getElementById('username').value; // Get the username input
+    const password = document.getElementById('password').value;
+
+    if (!usernameInput || !password) {
+        alert('Please fill in both username and password.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: usernameInput, password }),
+        });
+
+        if (response.ok) {
+            alert('Login successful!');
+            username = usernameInput; // Store the username globally
+            console.log('Logged in as:', username);
+            loginPage.classList.remove('active');
+            budgetPage.classList.add('active');
+            await loadSavedCars(); // Fetch saved cars for the logged-in user
+        } else {
+            const error = await response.json();
+            alert(error.error || 'Invalid username or password.');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        alert('An error occurred during login.');
+    }
+});
+
+// Handle account creation
+createAccountButton.addEventListener('click', async () => {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    if (!username || !password) {
+        alert('Please fill in both username and password.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/create-account', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password }),
+        });
+
+        if (response.ok) {
+            alert('Account created successfully! Please log in.');
+        } else {
+            alert('Error creating account. Username might be taken.');
+        }
+    } catch (error) {
+        console.error('Account creation error:', error);
+        alert('An error occurred during account creation. Please try again.');
+    }
+});
+
+        document.getElementById('budget-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const budget = document.getElementById('budget').value;
+
+            try {
+                const response = await fetch(`/api/vehicles?budget=${budget}`);
+                const data = await response.json();
+                if (data.data.length > 0) {
+                    vehicles = data.data;
+                    currentVehicleIndex = 0;
+                    displayVehicle(vehicles[currentVehicleIndex]);
+                    budgetPage.classList.remove('active');
+                    vehicleCard.style.display = 'block';
+                } else {
+                    alert('No vehicles found within your budget.');
+                }
+            } catch (error) {
+                console.error('Error fetching vehicles:', error);
+                alert('Failed to fetch vehicles. Try again later.');
+            }
+        });
+
+        function displayVehicle(vehicle) {
+            vehicleTitle.textContent = `${vehicle.brand} ${vehicle.model} (${vehicle.year})`;
+            vehicleImage.src = vehicle.imageURL || 'default.jpg';
+            vehicleDetails.innerHTML = `
+                <p>Type: ${vehicle.vehicleType}</p>
+                <p>Color: ${vehicle.colour}</p>
+                <p>Mileage: ${vehicle.mileage}</p>
+                <p>Condition: ${vehicle.condition}</p>
+                <p>Price: $${vehicle.price}</p>
+            `;
+        }
+
+        saveButton.addEventListener('click', async () => {
+            const currentVehicle = vehicles[currentVehicleIndex];
+            if (!savedCars.find((car) => car.vehicleID === currentVehicle.vehicleID)) {
+                const response = await fetch('/api/save-car', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, vehicleID: currentVehicle.vehicleID }),
+                });
+                if (response.ok) {
+                    savedCars.push(currentVehicle);
+                    alert(`${currentVehicle.brand} ${currentVehicle.model} saved successfully!`);
+                    currentVehicleIndex = (currentVehicleIndex + 1) % vehicles.length;
+                    displayVehicle(vehicles[currentVehicleIndex]);
+                } else {
+                    alert('Failed to save the car.');
+                }
+            } else {
+                alert('Car is already in your saved list.');
+            }
+        });
+
+    likeButton.addEventListener('click', () => {
+    savePreference('likes'); // Only save the preference
+    currentVehicleIndex = (currentVehicleIndex + 1) % vehicles.length; // Move to the next vehicle
+    displayVehicle(vehicles[currentVehicleIndex]); // Show the next vehicle
+});
+
+dislikeButton.addEventListener('click', () => {
+    savePreference('dislikes'); // Only save the preference
+    currentVehicleIndex = (currentVehicleIndex + 1) % vehicles.length; // Move to the next vehicle
+    displayVehicle(vehicles[currentVehicleIndex]); // Show the next vehicle
+});
+
+async function savePreference(likesOrDislikes) {
+    const currentVehicle = vehicles[currentVehicleIndex];
+
+    try {
+        const response = await fetch('/api/preference', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username,
+                vehicleID: currentVehicle.vehicleID,
+                likesOrDislikes,
+            }),
+        });
+
+        if (response.ok) {
+            alert(`You ${likesOrDislikes} ${currentVehicle.brand} ${currentVehicle.model}.`);
+        } else {
+            const error = await response.json();
+            console.error('Failed to save preference:', error);
+            alert(error.error || 'Failed to save preference.');
+        }
+    } catch (error) {
+        console.error('Error saving preference:', error);
+        alert('An error occurred while saving preference.');
+    }
+}
+
+        savedCarsButton.addEventListener('click', () => {
+            if (savedCars.length === 0) {
+                alert('No saved cars.');
+                return;
+            }
+            currentSavedCarIndex = 0;
+            displaySavedCar(savedCars[currentSavedCarIndex]);
+            vehicleCard.style.display = 'none';
+            savedVehicleCard.style.display = 'block';
+        });
+
+        function displaySavedCar(car) {
+            savedVehicleTitle.textContent = `${car.brand} ${car.model} (${car.year})`;
+            savedVehicleImage.src = car.imageURL || 'default.jpg';
+            savedVehicleDetails.innerHTML = `
+                <p>Type: ${car.vehicleType}</p>
+                <p>Color: ${car.colour}</p>
+                <p>Mileage: ${car.mileage}</p>
+                <p>Condition: ${car.condition}</p>
+                <p>Price: $${car.price}</p>
+            `;
+        }
+
+        nextButton.addEventListener('click', () => {
+            currentSavedCarIndex = (currentSavedCarIndex + 1) % savedCars.length;
+            displaySavedCar(savedCars[currentSavedCarIndex]);
+        });
+
+        backButton.addEventListener('click', () => {
+            currentSavedCarIndex =
+                (currentSavedCarIndex - 1 + savedCars.length) % savedCars.length;
+            displaySavedCar(savedCars[currentSavedCarIndex]);
+        });
+
+        backToVehiclesButton.addEventListener('click', () => {
+            savedVehicleCard.style.display = 'none';
+            vehicleCard.style.display = 'block';
+        });
+
+// Example usage: showing a popup with details
+furtherDetails.addEventListener('click', () => {
+    const currentVehicle = vehicles[currentVehicleIndex];
+    const content = `
+        <h2>Details</h2>
+        <p>Seller: ${currentVehicle.displayName || 'Unknown'}</p>
+        <p>Rating: ${currentVehicle.reviewLevel || 'Unavailable'} / 5</p>
+        <button id="close-popup">Close</button>
+    `;
+    showPopup(content);
+});
+
+        document.getElementById('remove-button').addEventListener('click', async () => {
+    const carToRemove = savedCars[currentSavedCarIndex];
+    try {
+        const response = await fetch('/api/remove-saved-car', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, vehicleID: carToRemove.vehicleID }),
+        });
+
+        if (response.ok) {
+            savedCars.splice(currentSavedCarIndex, 1);
+
+            if (savedCars.length === 0) {
+                alert('You have no more saved cars.');
+                savedVehicleCard.style.display = 'none';
+                vehicleCard.style.display = 'block';
+                return;
+            }
+
+            currentSavedCarIndex = currentSavedCarIndex % savedCars.length;
+            displaySavedCar(savedCars[currentSavedCarIndex]);
+        } else {
+            alert('Failed to remove car.');
+        }
+    } catch (error) {
+        console.error('Failed to remove car:', error);
+        alert('Error removing the car. Try again later.');
+    }
+});
+
+function showPopup(content) {
+    popupFurtherDetails.innerHTML = content;
+    popupFurtherDetails.style.display = 'block';
+    overlay.style.display = 'block';
+
+    // Add event listeners to close the popup
+    overlay.addEventListener('click', closePopup);
+    const closeButton = document.getElementById('close-popup');
+    if (closeButton) {
+        closeButton.addEventListener('click', closePopup);
+    }
+}
+
+function closePopup() {
+    popupFurtherDetails.style.display = 'none';
+    overlay.style.display = 'none';
+}
+    </script>
+</body>
+</html>

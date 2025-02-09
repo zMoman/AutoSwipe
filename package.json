@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "express": "^4.21.1",
+    "node.js": "^0.0.1-security",
+    "sqlite3": "^5.1.7"
+  },
+  "name": "practice",
+  "version": "1.0.0",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
